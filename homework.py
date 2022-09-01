@@ -1,11 +1,13 @@
+import logging
 import os
+import sys
+import time
+from http import HTTPStatus
+
 import requests
 import telegram
-import logging
-import time
 from dotenv import load_dotenv
-import sys
-from http import HTTPStatus
+
 from exeptions import ApiAnswerStatus, EmptyDictInResponse
 
 load_dotenv()
