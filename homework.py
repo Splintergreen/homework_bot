@@ -13,7 +13,7 @@ from exeptions import ApiAnswerStatus, EmptyDictInResponse
 load_dotenv()
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     filename='program.log',
     format='%(asctime)s, %(levelname)s, %(message)s'
 )
@@ -136,6 +136,7 @@ def main():
             time.sleep(RETRY_TIME)
         except IndexError:
             logging.debug('Новый статус отсутствует.')
+            time.sleep(RETRY_TIME)
             continue
         except Exception as error:
             message = f'Сбой в работе программы!\n\n{error}'
