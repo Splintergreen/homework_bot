@@ -13,7 +13,7 @@ from exeptions import ApiAnswerStatus, EmptyDictInResponse
 load_dotenv()
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format=(
         '%(asctime)s [%(levelname)s] - '
         '(%(filename)s).%(funcName)s:%(lineno)d - %(message)s'
@@ -31,8 +31,8 @@ TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 RETRY_TIME = 600
 ENDPOINT = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 HEADERS = {'Authorization': f'OAuth {PRACTICUM_TOKEN}'}
-gif_ok = 'https:///C6b.gif'
-gif_fix = 'https://partneorage/files/file_1573820864.gif'
+gif_ok = 'https://i.gifer.com/C6b.gif'
+gif_fix = 'https://partnerkin.com/storage/files/file_1573820864.gif'
 
 HOMEWORK_VERDICTS = {
     'approved': 'Работа проверена: ревьюеру всё понравилось. Ура!',
