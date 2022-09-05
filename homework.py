@@ -67,8 +67,10 @@ def send_message_by_status(bot, status, message):
     logging.debug('Старт функции проверки статуса работы.')
     homework_status = status[0].get('status')
     if homework_status == 'approved':
+        message = f'{message}\nКомментарий:\n{status[0].get("reviewer_comment")}'
         send_animation(bot, message, gif_ok)
     elif homework_status == 'rejected':
+        message = f'{message}\nКомментарий:\n{status[0].get("reviewer_comment")}'
         send_animation(bot, message, gif_fix)
     else:
         send_message(bot, message)
