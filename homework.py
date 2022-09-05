@@ -45,21 +45,33 @@ def send_message(bot, message):
     """Отправляет сообщения в Telegramm."""
     logging.debug('Старт функции отправки сообщения.')
     try:
-        if 'понравилось' in message:
-            try:
-                bot.send_animation(TELEGRAM_CHAT_ID, gif_ok, caption=message)
-            except Exception:
-                logging.info('Отсутствует Gif "успешная проверка"')
-                bot.send_message(TELEGRAM_CHAT_ID, message)
-        elif 'замечания' in message:
-            try:
-                bot.send_animation(TELEGRAM_CHAT_ID, gif_fix, caption=message)
-            except Exception:
-                logging.info('Отсутствует Gif "устранение замечаний"')
-                bot.send_message(TELEGRAM_CHAT_ID, message)
+        bot.send_message(TELEGRAM_CHAT_ID, message)
         logging.info('Сообщение отправлено')
     except telegram.error.TelegramError as error:
         logging.error(f'Сообщение не было отправлено!!! Ошибка - {error}')
+
+
+def send_animation(bot, message, gif):
+    """Отправляет сообщения с анимацией в Telegramm."""
+    logging.debug('Старт функции отправки сообщения с анимацией.')
+    try:
+        bot.send_animation(TELEGRAM_CHAT_ID, gif, caption=message)
+        logging.info('Сообщение с анимацией отправлено')
+    except telegram.error.TelegramError as error:
+        logging.error(f'Анимация не была отправлено!!! Ошибка - {error}')
+        send_message(bot, message)
+
+
+def send_message_by_status(bot, status, message):
+    """Выбор функции отправки сообщения в зависимости от статуса работы."""
+    logging.debug('Старт функции проверки статуса работы.')
+    homework_status = status[0].get('status')
+    if homework_status == 'approved':
+        send_animation(bot, message, gif_ok)
+    if homework_status == 'rejected':
+        send_animation(bot, message, gif_fix)
+    else:
+        send_message(bot, message)
 
 
 def get_api_answer(current_timestamp):
@@ -126,7 +138,7 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-    send_msg = set()  # Множество наполняется отправленными ошибками
+    send_msg = set()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
     while True:
@@ -136,13 +148,13 @@ def main():
             answer = get_api_answer(current_timestamp)
             homeworks = check_response(answer)
             status = parse_status(homeworks[0])
-            send_message(bot, status)
+            send_message_by_status(bot, homeworks, status)
         except IndexError:
             logging.debug('Новый статус отсутствует.')
             continue
         except Exception as error:
             message = f'Сбой в работе программы!\n\n{error}'
-            if message not in send_msg:  # Была такая ошибка отправлена или нет
+            if message not in send_msg:
                 send_message(bot, message)
                 send_msg.add(message)
         finally:
