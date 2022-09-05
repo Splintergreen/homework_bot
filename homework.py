@@ -68,7 +68,7 @@ def send_message_by_status(bot, status, message):
     homework_status = status[0].get('status')
     if homework_status == 'approved':
         send_animation(bot, message, gif_ok)
-    if homework_status == 'rejected':
+    elif homework_status == 'rejected':
         send_animation(bot, message, gif_fix)
     else:
         send_message(bot, message)
