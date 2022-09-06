@@ -67,10 +67,8 @@ def send_message_by_status(bot, status, message):
     logging.debug('Старт функции проверки статуса работы.')
     homework_status = status[0].get('status')
     if homework_status == 'approved':
-        message = f'{message}\nКомментарий:\n{status[0].get("reviewer_comment")}'
         send_animation(bot, message, gif_ok)
     elif homework_status == 'rejected':
-        message = f'{message}\nКомментарий:\n{status[0].get("reviewer_comment")}'
         send_animation(bot, message, gif_fix)
     else:
         send_message(bot, message)
@@ -142,18 +140,19 @@ def main():
     """Основная логика работы бота."""
     send_msg = set()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
+    if not check_tokens():
+        sys.exit()
 
     while True:
         try:
-            check_tokens()
             current_timestamp = int(time.time()) - RETRY_TIME
             answer = get_api_answer(current_timestamp)
             homeworks = check_response(answer)
-            status = parse_status(homeworks[0])
-            send_message_by_status(bot, homeworks, status)
-        except IndexError:
-            logging.debug('Новый статус отсутствует.')
-            continue
+            if homeworks:
+                status = parse_status(homeworks[0])
+                send_message_by_status(bot, homeworks, status)
+            else:
+                logging.debug('Новый статус отсутствует.')
         except Exception as error:
             message = f'Сбой в работе программы!\n\n{error}'
             if message not in send_msg:
