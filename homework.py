@@ -67,8 +67,12 @@ def send_message_by_status(bot, status, message):
     logging.debug('Старт функции проверки статуса работы.')
     homework_status = status[0].get('status')
     if homework_status == 'approved':
+        comment = status[0].get("reviewer_comment")
+        message = f'{message}\nКомментарий:\n{comment}'
         send_animation(bot, message, gif_ok)
     elif homework_status == 'rejected':
+        comment = status[0].get("reviewer_comment")
+        message = f'{message}\nКомментарий:\n{comment}'
         send_animation(bot, message, gif_fix)
     else:
         send_message(bot, message)
@@ -90,8 +94,8 @@ def get_api_answer(current_timestamp):
         logging.error(message)
         raise ApiAnswerStatus(message)
     if response.status_code != HTTPStatus.OK:
+        message = 'ENDPOINT неккоректен или недоступен!'
         logging.error(message)
-        message = 'Проверьте корректность ENDPOINT'
         raise ApiAnswerStatus(message)
     return response.json()
 
@@ -141,7 +145,7 @@ def main():
     send_msg = set()
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     if not check_tokens():
-        sys.exit()
+        sys.exit('Проблема с переменными окружения, завершение программы!')
 
     while True:
         try:
